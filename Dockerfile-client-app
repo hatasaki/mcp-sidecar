@@ -1,0 +1,17 @@
+FROM python:3.12
+
+# 作業ディレクトリを設定
+WORKDIR /app
+
+# 依存関係ファイルをコピーしてインストール
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# MCP プロキシースクリプトをコピー
+COPY mcp-proxy.py .
+
+# アプリケーションコードをコピー
+COPY app.py .
+
+# アプリケーションを起動
+CMD ["python", "app.py"]

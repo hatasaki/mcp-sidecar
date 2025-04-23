@@ -1,0 +1,54 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: github-mcp-sidecar
+  namespace: mcp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: github-mcp-sidecar
+  template:
+    metadata:
+      labels:
+        app: github-mcp-sidecar
+    spec:
+      volumes:
+        - name: mcp-pipes
+          emptyDir: {}
+      containers:
+        - resources: {}
+          name: github-mcp-server
+          command:
+            - /bin/sh
+            - '-c'
+          env:
+            - name: GITHUB_PERSONAL_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: github-token
+                  key: token # GitHub Personal Access Token
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: mcp-pipes
+              mountPath: /mcp-pipes
+          image: <your-built-github-mcp-server-image> # Your built GitHub MCP server image
+          args:
+            - |
+              rm -f /mcp-pipes/stdin /mcp-pipes/stdout
+              # Create fifos
+              mkfifo /mcp-pipes/stdin /mcp-pipes/stdout
+              # Start MCP server
+              ./github-mcp-server stdio --enable-command-logging --log-file /mcp-pipes/mcp-server.log < /mcp-pipes/stdin > /mcp-pipes/stdout
+        - resources: {}
+          terminationMessagePath: /dev/termination-log
+          name: my-app
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: mcp-pipes
+              mountPath: /mcp-pipes
+          image: <your-app-container-image> # Your application container image
+          env:
+            - name: GITHUB_REPO_OWNER
+              value: <your-github-repo-username> # GitHub Repo username
+      restartPolicy: Always
