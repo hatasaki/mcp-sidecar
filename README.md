@@ -6,7 +6,7 @@ Your can run MCP server only support stdio mode separetely from your app!
 ## MCP Sidecar concept
 ![sidecar image](/img/mcp_sidecar.png)
 
-## Content
+## Contents
 ### Dockerfile-github-mcp-server
 Sample Dockerfile to build GitHub MCP Server container(to add some tools to create FIFO pipe in GitHub MCP Server)
 
@@ -30,7 +30,7 @@ Local proxy to bridge stdin/stdout pipe between app container and MCP Server sid
     - docker build --tag `your-app-container-image` -f Dockerfile-client-app .
     - docker push `your-app-container-image`
 2. Build your GitHub MCP Server container with Dockerfile-github-mcp-server
-`This is optional, only required for a MCP server container image without shell or mkfifo such as GitHub MCP Server in this sample`
+`This is optional, only required for a MCP server container image without shell or mkfifo such as GitHub MCP Server`
     - cd ~
     - git clone https://github.com/github/github-mcp-server.git
     - cd github-mcp-server
