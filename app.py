@@ -1,6 +1,6 @@
 from mcp import ClientSession, StdioServerParameters, types
 from mcp.client.stdio import stdio_client
-import json
+import os
 
 # Create server parameters for stdio connection
 server_params = StdioServerParameters(
@@ -22,7 +22,7 @@ async def run():
             print("Available tools:", tools)
 
             # Call a tool
-            result = await session.call_tool("search_repositories", arguments={"query": "user:hatasaki"})
+            result = await session.call_tool("search_repositories", arguments={"query": os.getenv("GITHUB_REPO_OWNER")})
             print("Tool call result:", result)
 
 
